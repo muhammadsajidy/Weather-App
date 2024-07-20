@@ -31,14 +31,14 @@ body {
     font-size: 12px;
     border-radius: 20px;
     position: relative;
-    background-color: hsl(50, 90%, 49%);
+    background-color: hsl(50, 82%, 65%);
     cursor: pointer;
-    left: 37px;
+    left: 38px;
 }
 button:hover {
     box-shadow: 1px 1px 5px rgb(156, 150, 139);
 }
-.info {
+#info {
     background-image: url("background.png");
     background-position: center;
     background-size: cover;
@@ -48,8 +48,9 @@ button:hover {
     border-radius: 20px;
     color: rgb(40, 47, 53);
     width: 400px;
+    display: none;
 }
-.info1 {
+#info1 {
     width: 70%;
     margin-left: 15px;
     float: left;
@@ -70,10 +71,14 @@ button:hover {
     position: relative;
     right: 10px;
 }
-.info2 {
+#info2 {
     display:flex;
     justify-content: space-between;
     padding: 10px 20px;
+}
+.alg {
+    display:flex;
+    flex-direction:row;
 }
 .lat {
     font-size: 1rem;
@@ -81,11 +86,7 @@ button:hover {
 .lon {
     font-size: 1rem;
 }
-.alg {
-    display:flex;
-    flex-direction:row;
-}
-.info3 {
+#info3 {
     display:flex;
     flex-direction: column;
     justify-content: left;
@@ -99,4 +100,5 @@ button:hover {
 }
 .error {
     font-size: 1rem;
+    margin: 10px auto;
 }

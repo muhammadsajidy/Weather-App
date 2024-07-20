@@ -1,16 +1,17 @@
-const inputCity = document.getElementById("cityName");
+const input = document.getElementById("city-name");
 const button = document.getElementById("get-weather");
-const weatherInfo = document.getElementsByClassName("info");
-const weatherInfo1 = document.getElementsByClassName("info1");
-const weatherInfo2 = document.getElementsByClassName("info2");
-const weatherInfo3 = document.getElementsByClassName("info3");
+const parentContainer = document.getElementById("info");
+const childContainer1 = document.getElementById("info1");
+const childContainer2 = document.getElementById("info2");
+const childContainer3 = document.getElementById("info3");
+const apiKey = "26030a14a9d8e57a19e9405e7fc014d4";
 
 button.addEventListener("click", async (event) => {
     event.preventDefault();
-    const cityName = inputCity.value;
-    if(cityName) {
+    let city = input.value;
+    if(city) {
         try {
-            const weatherData = await getWeatherDetails(cityName);
+            const weatherData = await getWeatherInfo(city);
             displayWeather(weatherData);
         }
         catch (error) {
@@ -19,11 +20,11 @@ button.addEventListener("click", async (event) => {
         }
     }
     else {
-        displayError("Please enter a city");   
+        displayError("Please Enter a City")
     }
 })
 
-async function getWeatherDetails(city) {
+async function getWeatherInfo(city) {
     const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=26030a14a9d8e57a19e9405e7fc014d4`;
     let response = await fetch(api);
 
@@ -33,7 +34,6 @@ async function getWeatherDetails(city) {
 
     return await response.json();
 }
-
 function displayWeather(data) {
     const {
         name: city, 
@@ -42,41 +42,41 @@ function displayWeather(data) {
         weather: [{description, id}]
     } = data;
 
-    weatherInfo.textContent = "";
-    weatherInfo.style.display = "flex";
+    parentContainer.innerText = "";
+    parentContainer.style.display = "flex";
 
     const cityDisplay = document.createElement("p");
-    cityDisplay.textContent = city;
-    weatherInfo1.appendChild(cityDisplay);
+    cityDisplay.innerText = city;
+    childContainer1.appendChild(cityDisplay);
     cityDisplay.classList.add("city");
 
     const tempDisplay = document.createElement("h1");
     tempDisplay.textContent = `${temp-273.15} °C`;
-    weatherInfo1.appendChild(tempDisplay);
+    childContainer1.appendChild(tempDisplay);
     tempDisplay.classList.add("temperature");
 
     const latDisplay = document.createElement("p");
-    latDisplay.textContent = lat;
-    weatherInfo2.appendChild(latDisplay);
+    latDisplay.innerText = lat;
+    childContainer2.appendChild(latDisplay);
     latDisplay.classList.add("lat");
 
     const lonDisplay = document.createElement("p");
-    lonDisplay.textContent = lon;
-    weatherInfo2.appendChild(lonDisplay);
+    lonDisplay.innerText = lon;
+    childContainer2.appendChild(lonDisplay);
     lonDisplay.classList.add("lon");
 
     const humDisplay = document.createElement("p");
-    humDisplay.textContent = humidity;
-    weatherInfo3.appendChild(humDisplay);
+    humDisplay.innerText = humidity;
+    childContainer3.appendChild(humDisplay);
     humDisplay.classList.add("humidity");
 
     const descDisplay = document.createElement("p");
-    descDisplay.textContent = description;
-    weatherInfo3.appendChild(descDisplay);
+    descDisplay.innerText = description;
+    childContainer3.appendChild(descDisplay);
     descDisplay.classList.add("description");
 
     const emojiDisplay = document.createElement("span");
-    emojiDisplay.textContent = weatherEmoji(id);
+    emojiDisplay.innerText = weatherEmoji(id);
     document.querySelector("alg").appendChild(emojiDisplay);
     emojiDisplay.classList.add("emoji");
 }
@@ -101,13 +101,11 @@ function weatherEmoji(weatherId) {
             return "";
     }
 }
-
 function displayError(error) {
-    const errDisplay = document.createElement("p");
-    errDisplay.textContent = error;
-    errDisplay.classList.add("error");
-
-    weatherInfo.textContent = "";
-    weatherInfo.style.display = "flex";
-    weatherInfo.appendChild(errDisplay);
+    const errorMsg = document.createElement("P");
+    errorMsg.innerText = error;
+    errorMsg.classList.add("error");
+    parentContainer.innerText = "";
+    parentContainer.style.display = "flex";
+    parentContainer.appendChild(errorMsg);
 }
