@@ -1,10 +1,11 @@
 const input = document.getElementById("city-name");
 const button = document.getElementById("get-weather");
 const parentContainer = document.getElementById("info");
-const childContainer1 = document.getElementById("info1");
-const childContainer2 = document.getElementById("info2");
-const childContainer3 = document.getElementById("info3");
 const apiKey = "26030a14a9d8e57a19e9405e7fc014d4";
+
+if (!input) console.error("Input element not found");
+if (!button) console.error("Button element not found");
+if (!parentContainer) console.error("Parent container not found");
 
 button.addEventListener("click", async (event) => {
     event.preventDefault();
@@ -15,25 +16,25 @@ button.addEventListener("click", async (event) => {
             displayWeather(weatherData);
         }
         catch (error) {
-            console.error(error);
-            displayError(error);
+            displayError(error.message);
         }
     }
     else {
-        displayError("Please Enter a City")
+        displayError("Please Enter a City");
     }
-})
+});
 
 async function getWeatherInfo(city) {
-    const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=26030a14a9d8e57a19e9405e7fc014d4`;
+    const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
     let response = await fetch(api);
 
     if(!response.ok) {
-        throw new Error("Couldn't fetch weather data for the city!");
+        throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     return await response.json();
 }
+
 function displayWeather(data) {
     const {
         name: city, 
@@ -42,70 +43,76 @@ function displayWeather(data) {
         weather: [{description, id}]
     } = data;
 
-    parentContainer.innerText = "";
+    clearContainer(parentContainer);
     parentContainer.style.display = "flex";
+    parentContainer.style.flexDirection = "column";
+    parentContainer.style.alignItems = "center";
+    parentContainer.style.padding = "20px";
+    
+    appendToContainer(parentContainer, [
+        {tag: "h2", text: city, class: "city"},
+        {tag: "p", text: `${(temp-273.15).toFixed(2)} °C`, class: "temperature"},
+        {tag: "p", text: `Latitude: ${lat}`, class: "lat"},
+        {tag: "p", text: `Longitude: ${lon}`, class: "lon"},
+        {tag: "p", text: `Humidity: ${humidity}%`, class: "humidity"},
+        {tag: "p", text: `${description}`, class: "description"},
+        {tag: "span", text: weatherEmoji(id), class: "emoji"}
+    ]);
+}
 
-    const cityDisplay = document.createElement("p");
-    cityDisplay.innerText = city;
-    childContainer1.appendChild(cityDisplay);
-    cityDisplay.classList.add("city");
+function appendToContainer(container, elements) {
+    if (container) {
+        elements.forEach(el => {
+            const element = document.createElement(el.tag);
+            element.textContent = el.text;
+            element.classList.add(el.class);
+            element.style.margin = "5px 0";
+            container.appendChild(element);
+        });
+    } else {
+        console.error("Container not found");
+    }
+}
 
-    const tempDisplay = document.createElement("h1");
-    tempDisplay.textContent = `${temp-273.15} °C`;
-    childContainer1.appendChild(tempDisplay);
-    tempDisplay.classList.add("temperature");
-
-    const latDisplay = document.createElement("p");
-    latDisplay.innerText = lat;
-    childContainer2.appendChild(latDisplay);
-    latDisplay.classList.add("lat");
-
-    const lonDisplay = document.createElement("p");
-    lonDisplay.innerText = lon;
-    childContainer2.appendChild(lonDisplay);
-    lonDisplay.classList.add("lon");
-
-    const humDisplay = document.createElement("p");
-    humDisplay.innerText = humidity;
-    childContainer3.appendChild(humDisplay);
-    humDisplay.classList.add("humidity");
-
-    const descDisplay = document.createElement("p");
-    descDisplay.innerText = description;
-    childContainer3.appendChild(descDisplay);
-    descDisplay.classList.add("description");
-
-    const emojiDisplay = document.createElement("span");
-    emojiDisplay.innerText = weatherEmoji(id);
-    document.querySelector("alg").appendChild(emojiDisplay);
-    emojiDisplay.classList.add("emoji");
+function clearContainer(container) {
+    if (container) {
+        container.innerHTML = "";
+    } else {
+        console.error("Container not found");
+    }
 }
 
 function weatherEmoji(weatherId) {
     switch(true){
         case (weatherId >= 200 && weatherId < 300):
-            return "";
+            return "⛈️";
         case (weatherId >= 300 && weatherId < 400):
-            return "";
+            return "🌧️";
         case (weatherId >= 500 && weatherId < 600):
-            return "";
+            return "🌦️";
         case (weatherId >= 600 && weatherId < 700):
-            return "";
+            return "❄️";
         case (weatherId >= 700 && weatherId < 800):
-            return "";
+            return "🌫️";
         case (weatherId === 800):
-            return "";
+            return "☀️";
         case (weatherId >= 801 && weatherId < 810):
-            return "";
+            return "☁️";
         default:
-            return "";
+            return "🌡️";
     }
 }
+
 function displayError(error) {
-    const errorMsg = document.createElement("P");
-    errorMsg.innerText = error;
-    errorMsg.classList.add("error");
-    parentContainer.innerText = "";
-    parentContainer.style.display = "flex";
-    parentContainer.appendChild(errorMsg);
+    console.error("Displaying error:", error);
+    clearContainer(parentContainer);
+    if (parentContainer) {
+        parentContainer.style.display = "flex";
+        const errorMsg = document.createElement("p");
+        errorMsg.textContent = error;
+        errorMsg.classList.add("error");
+        parentContainer.appendChild(errorMsg);
+    } else {
+        console.error("Parent container not found");
+    }
 }
